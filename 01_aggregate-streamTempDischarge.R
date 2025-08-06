@@ -11,8 +11,8 @@ library(magrittr)
 min_year = 2024
 
 # Hydro station 15-min data to daytime mean
-hy_ytd = readr::read_csv("~/Downloads/hf070-04-15min.csv")
-hy_new = readr::read_csv("~/Downloads/hqf.csv")
+hy_ytd = readr::read_csv("data/met-data/hf070-04-15min.csv")
+hy_new = readr::read_csv("data/met-data/hqf.csv")
 hydro15 = dplyr::bind_rows(hy_ytd,hy_new) %>%
   dplyr::mutate(hour = lubridate::hour(datetime),
                 date = lubridate::date(datetime),
@@ -20,8 +20,8 @@ hydro15 = dplyr::bind_rows(hy_ytd,hy_new) %>%
   dplyr::filter(hour>=8 & hour<=16, year>=min_year)
   
 # Met station 15-min data
-met_ytd = readr::read_csv("~/Downloads/hf001-10-15min-m.csv")
-met_new = readr::read_csv("~/Downloads/qfm.csv")
+met_ytd = readr::read_csv("data/met-data/hf001-10-15min-m.csv")
+met_new = readr::read_csv("data/met-data/qfm.csv")
 met15 = dplyr::bind_rows(met_ytd[1:(nrow(met_ytd)-1),],met_new) %>%
   dplyr::mutate(hour = lubridate::hour(datetime),
                 date = lubridate::date(datetime),
@@ -30,5 +30,6 @@ met15 = dplyr::bind_rows(met_ytd[1:(nrow(met_ytd)-1),],met_new) %>%
 
 # Combine hydrology and meteorology data
 hydromet = dplyr::left_join(hydro15,met15)
+
 
 

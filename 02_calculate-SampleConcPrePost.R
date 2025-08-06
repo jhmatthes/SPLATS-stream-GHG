@@ -117,7 +117,7 @@ for(f in 1:length(files)){
   }
 }
 
-# Save processed output of everything
+# Save compiled output of raw GHG headspace concentrations
 #write.csv(GHGconc, "data/stream-depth-ghg-rawconc.csv",row.names=F)
 
 # Separate depth profile & stream samples
@@ -167,7 +167,7 @@ GHG_stream_full$month = lubridate::month(GHG_stream_full$date)
 GHG_stream_full$mday = lubridate::mday(GHG_stream_full$date)
 
 # Export and save the data as a csv file
-#write.csv(GHG_stream_full, "data/GHGstream_hdspconc_thru20250710.csv",row.names=F)
+#write.csv(GHG_stream_full, "data/GHGstream_hdspconc_thru20250730.csv",row.names=F)
 
 # Format depth sample ID into site, date, and sample
 #GHG_depth_full = GHG_depth[-grep("20m",GHG_depth$sample),] 
@@ -180,8 +180,7 @@ GHG_depth_full = GHG_depth %>%
                                                  grepl("D60", sample) ~ "D60"),
                 
                 site = substr(sample,1,2), # always first two chars
-                measurement_rep = substr(sample,nchar(sample),nchar(sample)))#, # always last char
-                #depth_rep = substr(sample,nchar(sample)-1,nchar(sample)-1))
+                measurement_rep = substr(sample,nchar(sample),nchar(sample)))
 
 GHG_depth_full$depth_rep = rep(NA,nrow(GHG_depth_full))
 GHG_depth_full$depth_rep[grep("2024",GHG_depth_full$sample)] = substr(GHG_depth_full$sample[grep("2024",GHG_depth_full$sample)],
@@ -205,12 +204,12 @@ GHG_depth_full$depth_rep[GHG_depth_full$depth_rep=="Z"] = substr(GHG_depth_full$
                                                               nchar(GHG_depth_full$sample)[GHG_depth_full$depth_rep=="Z"]-3)
 
 # Extract dates from sample ID as string of 8 numbers
+# (Needs 3 parts due to changes in standard digits for year)
 dates = rep(NA,nrow(GHG_depth_full))
 dates[grep("2024",GHG_depth_full$sample)] = substr(GHG_depth_full$sample[grep("2024",GHG_depth_full$sample)],
                                                   3,10)
 dates[grep("250",GHG_depth_full$sample)] = paste0("20",substr(GHG_depth_full$sample[grep("250",GHG_depth_full$sample)],
                                                   3,8))
-
 dates[is.na(dates)] = paste0("20",substr(GHG_depth_full$sample[is.na(dates)],4,9))
 
 GHG_depth_full$date = lubridate::ymd(dates)
@@ -225,4 +224,4 @@ GHG_swamp = dplyr::filter(GHG_stream_full,site %in% c("AS","BG"))
 GHG_depthsurface = dplyr::bind_rows(GHG_depth_full,GHG_swamp)
 
 # write out file
-#write.csv(GHG_depthsurface, "data/GHGdepth_hdspconc_thru20250710.csv",row.names=F)
+#write.csv(GHG_depthsurface, "data/GHGdepth_hdspconc_thru20250702.csv",row.names=F)

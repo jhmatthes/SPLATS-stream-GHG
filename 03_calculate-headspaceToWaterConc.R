@@ -2,15 +2,16 @@
 # with water & air temp, and air pressure to calculate the concentration
 # within the water sample in the field
 
-# Change file path to SPLATS-streams-v2 folder
-source("GHG_noCarbonateCorr.R")
+library(tidyverse)
 
+# Source GHG air to water conc function
+source("GHG_noCarbonateCorr.R")
 
 ### Apply corrections to calculate the concentration in the streamwater
 ### from the headspace concentration
 
 # Read in headspace concentration file for streams
-stream_only = readr::read_csv("data/GHGstream_hdspconc_thru20250710.csv")
+stream_only = readr::read_csv("data/GHGdepth_hdspconc_thru20250710.csv")
 
 # Get hydromet table from aggregate-streamTempDischarge.R
 # Format hydro data for linking with concentrations
@@ -36,7 +37,8 @@ met = select(hydro_all, date, tair,  Pkpa)
 # Combine hydro-met data with headspace data
 hydromet = left_join(hydro, met, by="date")
 streamGHGphys = left_join(stream_only,hydromet,by=c("site","date")) %>%
-  filter(site != "AO")
+  filter(site != "AO") #%>%
+  #select(-dates)
 
 # loop over dates & sites
 dates = unique(streamGHGphys$date)
@@ -91,6 +93,6 @@ for(d in 1:length(dates)){
   #}
 }
 
-# write.csv(stream_GHGwater,"data/streamGHG_water_thru2025-07-11.csv",
+# write.csv(stream_GHGwater,"data/stream-ghg-water-thru073025.csv",
 #           row.names=F,na="")
 
